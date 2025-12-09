@@ -25,3 +25,7 @@ MongoDB Collections Used
 2. Flight Booking Module:
    use buyingDB
    db.newCollection.find()
+
+3. Users Module:
+    use userDB
+    db.userDB.find()
