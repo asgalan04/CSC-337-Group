@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Browse Destinations - Plane Ticket Booking</title>
+  <link rel="stylesheet" href="stylesheet.css">
+</head>
+
+<body>
+
+  <h1>Plane Ticket Booking System</h1>
+
+  <nav>
+    <a href="destinations.html">Manage Destinations</a>
+    <a href="destinations_view.html">Browse Destinations</a>
+    <a href="/form">Book Flight</a>
+    <a href="users.html">Users</a>
+  </nav>
+
+  <h2>Browse Destinations</h2>
+
+  <p>
+    Search by city or country:
+    <input type="text" id="search-text">
+    <button id="search-button">Search</button>
+    <button id="clear-button">Clear</button>
+  </p>
+
+  <div id="browse-destinations-list"></div>
+  <p id="browse-destinations-error" class="error"></p>
+
+  <script src="destinations_view.js"></script>
+</body>
+</html>

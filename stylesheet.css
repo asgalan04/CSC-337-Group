@@ -1,0 +1,84 @@
+body {
+  font-family:'Times New Roman', Times, serif;
+  margin: 20px;
+  background-color:aliceblue
+}
+
+nav a {
+  margin-right: 12px;
+}
+
+table {
+  border-collapse: collapse;
+  margin-top: 10px;
+}
+
+table, td {
+  border: 1px solid black;
+  padding: 6px;
+}
+
+th{
+  border: 1px solid black;
+  background-color: lightcoral;
+}
+
+.error {
+  color: red;
+}
+
+.info {
+  color: green;
+}
+
+.dest-container {
+  display: flex;
+  align-items: flex-start;
+  gap: 30px;
+  margin-top: 10px;
+}
+
+.side-image {
+  width: 250px;
+  border-radius: 8px;
+}
+html, body { 
+  height: 100%;
+   padding: 0; }
+ .square{ 
+  background-color:aliceblue;
+   height: 100%; 
+   width: 100%; } 
+ .box{
+   margin: auto; 
+  margin-top: 50px; 
+  background-color: aliceblue;
+   width: 50%; 
+   height: 50%;
+    text-align: center; 
+   padding-top: 20px;
+   }
+
+  /* Flight page body */
+#flightBody {
+background-color: cyan;
+}
+
+/* The box that contains the flights */
+#flight-box {
+margin: auto;
+background-color: snow;
+width: 50%;
+text-align: center;
+padding: 20px;
+}
+
+/* Each generated flight div */
+.flight-card {
+background-color: white;
+margin: 10px;
+padding: 10px;
+border-radius: 10px;
+width: 95%;
+border: 2px solid black;
+}

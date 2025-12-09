@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Destinations - Plane Ticket Booking</title>
+  <link rel="stylesheet" href="stylesheet.css">
+</head>
+
+<body>
+
+  <h1>Plane Ticket Booking System</h1>
+
+  <nav>
+    <a href="index.html">Book Flight</a>
+    <a href="destinations.html">Destinations</a>
+    <a href="users.html">Users</a>
+  </nav>
+
+  <h2>Available Destinations</h2>
+
+  <div class="dest-container">
+    <div id="destinations-list"></div>
+    <img src="destinationspic.jpeg" alt="pic" class="side-image">
+  </div>
+
+  <p id="destinations-error" class="error"></p>
+
+  <h2>Add New Destination</h2>
+
+  <form id="destination-form">
+    <p>
+      Code:
+      <input type="text" id="dest-code">
+    </p>
+    <p>
+      City:
+      <input type="text" id="dest-city">
+    </p>
+    <p>
+      Country:
+      <input type="text" id="dest-country">
+    </p>
+    <button type="submit">Add Destination</button>
+  </form>
+
+  <p id="destinations-form-msg" class="info"></p>
+
+  <script src="destinations.js"></script>
+</body>
+</html>
