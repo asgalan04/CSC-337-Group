@@ -162,8 +162,9 @@ app.get('/accept', function (req, res) {
 <html lang="en">
 <head>
   <title>Booking Confirmed</title>
+  <link rel="stylesheet" type="text/css" href="/stylesheet.css">
 </head>
-<body>
+<body id="data-body">
 
   <nav>
     <a href="destinations.html">Manage Destinations</a>
@@ -172,7 +173,7 @@ app.get('/accept', function (req, res) {
     <a href="users.html">Users</a>
   </nav>
 
-  <div>
+  <div id="data">
     <h1>The following data has been saved</h1>
     <div>Name: ${q.fname} ${q.lname}</div>
     <div>Date: ${q.date}</div>
