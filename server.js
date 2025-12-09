@@ -203,7 +203,7 @@ app.get('/flight', function (req, res) {
     <a href="destinations.html">Manage Destinations</a>
     <a href="destinations_view.html">Browse Destinations</a>
     <a href="/form">Book Flight</a>
-    <a href="html.html">Home</a>
+    <a href="home.html">Home</a>
   </nav>
   <div id="box">
     <h1>Available flights</h1>
@@ -236,7 +236,7 @@ app.get('/accept', function (req, res) {
     <a href="destinations.html">Manage Destinations</a>
     <a href="destinations_view.html">Browse Destinations</a>
     <a href="/form">Book Flight</a>
-    <a href="users.html">Users</a>
+    <a href="home.html">Users</a>
   </nav>
 
   <div>
