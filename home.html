@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script src="/handleUsers.js"></script>
+        <link rel="stylesheet" type="text/css" href="stylesheet.css">
+    </head>
+    <body>
+        <nav>
+        </nav>
+        <div>
+            <p id="test">This is the homepage. Please login or create an account before viewing destinations or booking a flight</p>
+        </div>
+        <script>
+            window.onload = function() {
+            var navBar = document.querySelector('nav');
+                if (window.location.href.includes('username=')) {
+                    navBar.innerHTML = "<a href=\"#\" onclick=\"sendReq('home')\">Home</a><a href=\"#\" onclick=\"sendReq('create_user')\">Create user</a><a href='#' onclick=\"sendReq('logout')\"; clearUsername()>Logout</a> <a href=\"#\" onclick=\"sendReq('destinations_view')\">Browse Destinations</a><a href=\"#\" onclick=\"sendReq('form')\">Book Flight</a>";
+                } else {
+                if (clearUsername)
+                    navBar.innerHTML = "<a href=\"#\" onclick=\"sendReq('home')\">Home</a><a href=\"#\" onclick=\"sendReq('create_user')\">Create user</a><a href=\"#\" onclick=\"sendReq('login')\">Log in</a>"
+                }
+            }
+        </script>
+    </body>
+</html>

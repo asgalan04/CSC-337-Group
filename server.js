@@ -1,10 +1,54 @@
 var express = require('express');
 var path = require('path');
+var fs = require('fs');
+var crypto = require('crypto');
+var { MongoClient } = require('mongodb');
 
-
+var client = new MongoClient('mongodb://127.0.0.1:27017/');
 var registerDestinationRoutes = require('./destinations_routes');
-
 var app = express();
+
+async function addUsers(username, password) {
+    return await insertPromise('userDB', { username, password });
+}
+
+async function insertPromise(collName, obj) {
+    try {
+        await client.connect(); 
+        const db = client.db('userDB');
+        const coll = db.collection(collName);
+        const result = await coll.insertOne(obj);
+        return result;          
+    } finally {
+        await client.close();  
+    }
+}
+
+async function loadUsers() {
+    return await findPromise('userDB', {});
+}
+
+async function findPromise(collName, search) {
+    try {
+        await client.connect();
+        const db = client.db('userDB');
+        const coll = db.collection(collName);
+        const arr = await coll.find(search).toArray();
+        return arr;
+    } finally {
+        await client.close();
+    }
+}
+
+async function checkLogin(username, password){
+    const users = await loadUsers();
+    for (const user of users) {
+        if (user.username === username && user.password === password) {
+            return true;
+        }
+    }
+    return false;
+}
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
@@ -13,38 +57,66 @@ app.use(express.static(__dirname));
 registerDestinationRoutes(app);
 
 app.get('/form', function (req, res) {
-  res.send(`<!DOCTYPE html>
-<html lang="en">
-<head>
-<link rel="stylesheet" type="text/css" href="/stylesheet.css">
-  <title>Book Flight</title>
-</head>
-<body>
-  <nav>
-    <a href="destinations.html">Manage Destinations</a>
-    <a href="destinations_view.html">Browse Destinations</a>
-    <a href="/form">Book Flight</a>
-    <a href="users.html">Users</a>
-  </nav>
-  <div class="square">
-    <div class="box">
-      <h1>Welcome to our booking system</h1>
-      <form action="/flight" method="get">
-        First Name <input type="text" name="fname" placeholder="First name">
-        last Name <input type="text" name="lname" placeholder="Last name"><br><br>
-        <label for="date">Travel date</label><br>
-        <input type="text" name="date" placeholder="mm/dd/yyyy"><br><br>
-        <label for="origin">Departure</label><br>
-        <input type="text" name="origin" placeholder="origin"><br><br>
-        <label for="Destination">Destination</label><br>
-        <input type="text" name="Destination" placeholder="Destination"><br><br>
-        <input type="submit" value="Search flights">
-      </form>
-    </div>
-  </div>
-</body>
-</html>`);
+      res.sendFile(path.join(__dirname, 'form.html'))
 });
+
+app.get('/', function(req, res){
+    res.sendFile(path.join(__dirname, 'home.html'))
+})
+
+app.get('/handleUsers.js', function(req, res){
+    res.sendFile(path.join(__dirname, 'handleUsers.js'))
+})
+
+app.get('/home', function(req, res){
+    res.sendFile(path.join(__dirname, 'home.html'))
+})
+
+app.post('/home', express.urlencoded(), function(req, res){
+    res.sendFile(path.join(__dirname, 'home.html'))
+})
+
+app.get('/create_user', function(req, res){
+    res.sendFile(path.join(__dirname, 'create_user.html'))
+})
+
+app.post('/create_action', express.urlencoded(), async function(req, res) {
+    try {
+        const query = req.body;
+        const hash = crypto.createHash('sha256');
+        const hashedPassword = hash.update(query.password).digest('hex');
+
+        await addUsers(query.username, hashedPassword);
+        res.sendFile(path.join(__dirname, 'create_action.html'));
+    } catch (err) {
+        console.log(err);
+        res.status(500).send("Error creating user");
+    }
+});
+
+app.get('/login', function(req, res){
+    res.sendFile(path.join(__dirname, 'login.html'))
+})
+
+app.post('/login', express.urlencoded(), function(req, res){
+    res.sendFile(path.join(__dirname, 'login.html'))
+})
+
+app.post('/lgn_action', express.urlencoded(), async function(req, res){
+    var query = req.body;
+    var hash = crypto.createHash('sha256');
+    var hashedPassword = hash.update(query.password).digest('hex');
+
+    if(await checkLogin(query.username, hashedPassword)){
+        res.sendFile(path.join(__dirname, 'lgn_action.html'));
+    } else {
+        res.sendFile(path.join(__dirname, 'lgn_action_failure.html'));
+    }
+});
+
+app.post('/logout', express.urlencoded(), function(req, res){
+    res.sendFile(path.join(__dirname, 'logout.html'))
+})
 
 app.get('/flight', function (req, res) {
   var fname = req.query.fname || '';
@@ -57,9 +129,17 @@ app.get('/flight', function (req, res) {
 <html lang="en">
 <head>
   <title>Available Flights</title>
-  <link rel="stylesheet" type="text/css" href="/stylesheet.css">
   <style>
-    
+    body {
+      background-color: aqua;
+    }
+    #box{
+      margin: auto;
+      background-color: snow;
+      width: 50%;
+      text-align: center;
+      padding: 20px;
+    }
   </style>
   <script>
     var fname = "${fname}";
@@ -97,14 +177,18 @@ app.get('/flight', function (req, res) {
         button.setAttribute('value','select');
         button.setAttribute('onclick','getValue(' + i + ')');
         div.id = i;
-        div.className="flight-card"
-        
+        div.style.backgroundColor = "white";
+        div.style.margin = "10px";
+        div.style.padding = "10px";
+        div.style.borderRadius = "10px";
+        div.style.width = "95%";
+        div.style.border = "2px solid black";
         div.innerText ="flight number #" + encodeURIComponent(flightNumber) + "\\n" +
                        "Departure: " + Departure + "\\n" +
                        "Destination: " + Destination + "\\n" +
                        " Price: " + encodeURIComponent(pricealtered) + "\\n";
         div.appendChild(button);
-        document.getElementById("flight-box").appendChild(div);
+        document.getElementById("box").appendChild(div);
       }
     }
 
@@ -114,14 +198,14 @@ app.get('/flight', function (req, res) {
   </script>
 </head>
 
-<body id="flightBody" onload="start()">
+<body onload="start()">
   <nav>
     <a href="destinations.html">Manage Destinations</a>
     <a href="destinations_view.html">Browse Destinations</a>
     <a href="/form">Book Flight</a>
-    <a href="users.html">Users</a>
+    <a href="html.html">Home</a>
   </nav>
-  <div id="flight-box">
+  <div id="box">
     <h1>Available flights</h1>
   </div>
 </body>
@@ -131,40 +215,22 @@ app.get('/flight', function (req, res) {
 
 app.get('/accept', function (req, res) {
   var q = req.query;
-  var {MongoClient}=require('mongodb')
-    var client=new MongoClient('mongodb://127.0.0.1:27017')
+  var data = "Passenger name: " + q.fname + " " + q.lname + " " +
+             q.flightNumber + " Departure: " + q.origin +
+             " Destination: " + q.Destination + " " + q.price + "\\n";
 
-    function mongoInsertPromise(obj){
-    return client.connect()
-    .then(function(){
-        var db = client.db('buyingDB');
-        var coll = db.collection('newCollection');
-        return coll.insertOne(obj)
-        .then(function(){
-            console.log('inserted one');
-        });
-    })
-    .catch(function(err){
-        console.log(err);
-    })
-    .finally(function(){
-        client.close();
-    });
-}
+  fs.appendFile('data.txt', data, function(err){
+    if (err) {
+      console.log("Error writing to data.txt", err);
+    }
+  });
 
-    var personname=q.fname+" "+q.lname
-    var Flight=q.flightNumber.split('#')
-    var pricecorrected=q.price.split(': ')
-    var mongoObj={'name':personname,'flightNumber':Flight[1],'Departure':q.origin,'Destination':q.Destination,'price':pricecorrected[1]}
-    mongoInsertPromise(mongoObj)
- 
   res.send(`<!DOCTYPE html>
 <html lang="en">
 <head>
   <title>Booking Confirmed</title>
-  <link rel="stylesheet" type="text/css" href="/stylesheet.css">
 </head>
-<body id="data-body">
+<body>
 
   <nav>
     <a href="destinations.html">Manage Destinations</a>
@@ -173,7 +239,7 @@ app.get('/accept', function (req, res) {
     <a href="users.html">Users</a>
   </nav>
 
-  <div id="data">
+  <div>
     <h1>The following data has been saved</h1>
     <div>Name: ${q.fname} ${q.lname}</div>
     <div>Date: ${q.date}</div>
@@ -190,7 +256,7 @@ app.get('/accept', function (req, res) {
 
 
 
-app.get('/', function(req, res) {
+app.get('/destinations', function(req, res) {
   res.sendFile(path.join(__dirname, 'destinations.html'));
 });
 

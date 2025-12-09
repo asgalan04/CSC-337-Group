@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script src="/source.js"></script>
+        <link rel="stylesheet" type="text/css" href="/stylesheet.css">
+    </head>
+            <a href="#" onclick="sendReq('home')">Home</a>
+            <a href="#" onclick="sendReq('create_user')">Create user</a>
+            <a href="#" onclick="sendReq('login')">Login</a>
+        </nav>
+        <div>
+            Username or password is incorrect!
+        </div>
+        <script>
+            var navBar = document.querySelector('nav');
+            if (checkLogin()) {
+                var logoutLink = document.createElement('a');
+                logoutLink.textContent = 'Logout';
+                logoutLink.onclick = function() { sendReq('logout'); };
+                navBar.appendChild(logoutLink);
+            }
+        </script>
+    </body>
+</html>

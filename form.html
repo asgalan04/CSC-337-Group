@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <style>
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+        .square{
+            background-color:lightcyan;
+            height: 100%;
+            width: 100%;
+        }
+        .box{
+            margin: auto;
+            margin-top: 50px;
+            background-color: snow;
+            width: 50%;
+            height: 50%;
+            text-align: center;
+            padding-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="square">
+        <div class="box">
+            <h1>Welcome to our booking system</h1>
+            <form action="/flight" method="get">
+                First Name <input type="text" name="fname" placeholder="First name">
+                last Name <input type="text" name="lname" placeholder="Last name"><br><br>
+                <label for="date">Travel date</label><br>
+                <input type="text" name="date" placeholder="mm/dd/yyyy"><br><br>
+                <label for="origin">Departure</label><br>
+                <input type="text" name="origin" placeholder="origin"><br><br>
+                <label for="Destination">Destination</label><br>
+                <input type="text" name="Destination" placeholder="Destination"><br><br>
+                <input type="submit" value="Search flights">
+            </form>
+        </div>
+    </div>
+</body>
+</html>
