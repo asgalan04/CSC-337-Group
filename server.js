@@ -129,17 +129,9 @@ app.get('/flight', function (req, res) {
 <html lang="en">
 <head>
   <title>Available Flights</title>
+  <link rel="stylesheet" type="text/css" href="/stylesheet.css">
   <style>
-    body {
-      background-color: aqua;
-    }
-    #box{
-      margin: auto;
-      background-color: snow;
-      width: 50%;
-      text-align: center;
-      padding: 20px;
-    }
+    
   </style>
   <script>
     var fname = "${fname}";
@@ -177,18 +169,14 @@ app.get('/flight', function (req, res) {
         button.setAttribute('value','select');
         button.setAttribute('onclick','getValue(' + i + ')');
         div.id = i;
-        div.style.backgroundColor = "white";
-        div.style.margin = "10px";
-        div.style.padding = "10px";
-        div.style.borderRadius = "10px";
-        div.style.width = "95%";
-        div.style.border = "2px solid black";
+        div.className="flight-card"
+        
         div.innerText ="flight number #" + encodeURIComponent(flightNumber) + "\\n" +
                        "Departure: " + Departure + "\\n" +
                        "Destination: " + Destination + "\\n" +
                        " Price: " + encodeURIComponent(pricealtered) + "\\n";
         div.appendChild(button);
-        document.getElementById("box").appendChild(div);
+        document.getElementById("flight-box").appendChild(div);
       }
     }
 
@@ -198,14 +186,14 @@ app.get('/flight', function (req, res) {
   </script>
 </head>
 
-<body onload="start()">
+<body id="flightBody" onload="start()">
   <nav>
     <a href="destinations.html">Manage Destinations</a>
     <a href="destinations_view.html">Browse Destinations</a>
     <a href="/form">Book Flight</a>
-    <a href="home.html">Home</a>
+    <a href="users.html">Users</a>
   </nav>
-  <div id="box">
+  <div id="flight-box">
     <h1>Available flights</h1>
   </div>
 </body>
@@ -215,31 +203,51 @@ app.get('/flight', function (req, res) {
 
 app.get('/accept', function (req, res) {
   var q = req.query;
-  var data = "Passenger name: " + q.fname + " " + q.lname + " " +
-             q.flightNumber + " Departure: " + q.origin +
-             " Destination: " + q.Destination + " " + q.price + "\\n";
+  var {MongoClient}=require('mongodb')
+    var client=new MongoClient('mongodb://127.0.0.1:27017')
 
-  fs.appendFile('data.txt', data, function(err){
-    if (err) {
-      console.log("Error writing to data.txt", err);
-    }
-  });
+    function mongoInsertPromise(obj){
+    return client.connect()
+    .then(function(){
+        var db = client.db('buyingDB');
+        var coll = db.collection('newCollection');
+        return coll.insertOne(obj)
+        .then(function(){
+            console.log('inserted one');
+        });
+    })
+    .catch(function(err){
+        console.log(err);
+    })
+    .finally(function(){
+        client.close();
+    });
+}
+
+    var personname=q.fname+" "+q.lname
+    var Flight=q.flightNumber.split('#')
+    var pricecorrected=q.price.split(': ')
+    var mongoObj={'name':personname,'flightNumber':Flight[1],'Departure':q.origin,'Destination':q.Destination,'price':pricecorrected[1]}
+    mongoInsertPromise(mongoObj)
 
   res.send(`<!DOCTYPE html>
 <html lang="en">
 <head>
   <title>Booking Confirmed</title>
+  <link rel="stylesheet" type="text/css" href="/stylesheet.css">
 </head>
 <body>
+<body id="data-body">
 
   <nav>
     <a href="destinations.html">Manage Destinations</a>
     <a href="destinations_view.html">Browse Destinations</a>
     <a href="/form">Book Flight</a>
-    <a href="home.html">Users</a>
+    <a href="users.html">Users</a>
   </nav>
 
   <div>
+  <div id="data">
     <h1>The following data has been saved</h1>
     <div>Name: ${q.fname} ${q.lname}</div>
     <div>Date: ${q.date}</div>
@@ -253,6 +261,7 @@ app.get('/accept', function (req, res) {
 </body>
 </html>`);
 });
+
 
 
 
